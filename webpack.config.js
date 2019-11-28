@@ -27,17 +27,24 @@ const config = {
     },
     optimization: {
         splitChunks: {
+            chunks: 'all',
             cacheGroups: {
-                widgets: {
+                vendors: false,
+                default: false,
+                edgeCaseWidget: {
                     test: module => {
-                        return module.identifier().includes('src/widgets');
+                        return module.identifier().includes('edge-case-widget') || module.issuer && module.issuer.context.includes('edge-case-widget');
                     },
-                    name: module => {
-                        const list = module.identifier().split('/');
-                        list.pop();
-                        return list.pop();
+                    name: 'edge-case-widget',
+                    chunks: 'all',
+                    enforce: true,
+                },
+                interestingWidget: {
+                    test: module => {
+                        return module.identifier().includes('interesting-widget') || module.issuer && module.issuer.context.includes('interesting-widget');
                     },
-                    chunks: 'async',
+                    name: 'interesting-widget',
+                    chunks: 'all',
                     enforce: true
                 }
             }
