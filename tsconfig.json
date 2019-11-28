@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+    "module": "esnext",
+    "sourceMap": true,
+    "allowJs": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es5",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": false
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
+}
