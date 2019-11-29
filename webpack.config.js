@@ -31,25 +31,27 @@ const config = {
             cacheGroups: {
                 vendors: false,
                 default: false,
-                edgeCaseWidget: {
-                    test: module => {
-                        return module.identifier().includes('edge-case-widget') || module.issuer && module.issuer.context.includes('edge-case-widget');
-                    },
-                    name: 'edge-case-widget',
-                    chunks: 'all',
-                    enforce: true,
-                },
-                interestingWidget: {
-                    test: module => {
-                        return module.identifier().includes('interesting-widget') || module.issuer && module.issuer.context.includes('interesting-widget');
-                    },
-                    name: 'interesting-widget',
-                    chunks: 'all',
-                    enforce: true
-                }
+                edgeCaseWidget: getSplitChunksRuleForWidget('edge-case-widget'),
+                interestingWidget: getSplitChunksRuleForWidget('interesting-widget')
             }
         }
     }
 };
+
+function isRelativeToWidget(module, widgetName) {
+    if (module.identifier().includes(widgetName)) return true;
+
+    if (module.issuer) return isRelativeToWidget(module.issuer, widgetName)
+}
+
+function getSplitChunksRuleForWidget(widgetName) {
+    return {
+        test: module => isRelativeToWidget(module, widgetName),
+        name: widgetName,
+        chunks: 'async',
+        enforce: true,
+    }
+}
+
 
 module.exports = config;
