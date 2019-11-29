@@ -27,22 +27,31 @@ const config = {
     },
     optimization: {
         splitChunks: {
+            chunks: 'all',
             cacheGroups: {
-                widgets: {
-                    test: module => {
-                        return module.identifier().includes('src/widgets');
-                    },
-                    name: module => {
-                        const list = module.identifier().split('/');
-                        list.pop();
-                        return list.pop();
-                    },
-                    chunks: 'async',
-                    enforce: true
-                }
+                vendors: false,
+                default: false,
+                edgeCaseWidget: getSplitChunksRuleForWidget('edge-case-widget'),
+                interestingWidget: getSplitChunksRuleForWidget('interesting-widget')
             }
         }
     }
 };
+
+function isRelativeToWidget(module, widgetName) {
+    if (module.identifier().includes(widgetName)) return true;
+
+    if (module.issuer) return isRelativeToWidget(module.issuer, widgetName)
+}
+
+function getSplitChunksRuleForWidget(widgetName) {
+    return {
+        test: module => isRelativeToWidget(module, widgetName),
+        name: widgetName,
+        chunks: 'async',
+        enforce: true,
+    }
+}
+
 
 module.exports = config;
